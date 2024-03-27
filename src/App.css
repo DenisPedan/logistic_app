@@ -8,9 +8,62 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
 }
 
 .App {
-    width: 800px;
+    width: 1000px;
 }
 
+.navbar {
+    height: 50px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    background: #c8c8c8;
+}
+
+.button {
+    padding: 5px 15px;
+    color: black;
+    font-size: 14px;
+    background: transparent;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.button--disabled {
+    color: #918d8d;
+}
+
+.button--table {
+    border: none;
+}
+
+.modal-container {
+    width: 500px;
+    height: auto;
+    position: absolute;
+    margin: auto;
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+.td_with_buttons {
+    display: flex;
+}
+
+.td_with_button {
+    padding: 10px;
+    display: flex;
+}
+
+.td_with_button:first-child {
+    border-right: 1px solid black;
+}
+
+.background-white {
+    background-color: white;
+}

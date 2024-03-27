@@ -1,6 +1,19 @@
 import React, {FC, useState} from 'react';
-import CreateAndEditWindow from "./CreateAndEditWindow";
+import CreateAndEditWindow, {defaultState} from "./CreateAndEditWindow";
 import {useNavigate} from "react-router-dom";
+import {RequestObject} from "./Request";
+import {Modal, Select} from '@gravity-ui/uikit'
+
+const tableValueMap = [
+    'Номер заявки',
+    'Дата и время заявки',
+    'Название компании клиента',
+    'ФИО водителя',
+    'Номер телефона водителя',
+    'Комментарии',
+    'Статус заявки',
+    'ATIcode'
+]
 
 const requestListArray = [
     {
@@ -26,7 +39,7 @@ const requestListArray = [
 ]
 
 interface RequestTableProps {
-    setRequestData: (value: any) => void;
+    setRequestData: (value: RequestObject) => void;
     adminMode: boolean;
 }
 
@@ -41,70 +54,70 @@ const RequestsTable: FC<RequestTableProps> = ({setRequestData, adminMode}) => {
     const navigate = useNavigate()
 
 const createRequest = () => {
-        setWindowState((prev: any) => ({
+        setWindowState((prev) => ({
             ...prev, isOpen: true, isRequestCreating: true
         }))
 }
 
-const doubleClickHandler = (requestNumber: any) => {
-    setRequestData(requestList.find(a => requestNumber === a.requestNumber))
+const doubleClickHandler = (requestNumber: string) => {
+    setRequestData(requestList.find(a => requestNumber === a.requestNumber) || defaultState)
     navigate(`request/${requestNumber}`)
 }
 
     return (
         <div>
-            <div>Количество заявок: {requestList.length}</div>
-            <button disabled={!adminMode} onClick={createRequest}>Создать заявку</button>
-            <table>
-                <thead>
+            <div style={{marginBottom: 10, fontWeight: 'bold'}}><p style={{fontSize: 12}}>Количество заявок:</p> {requestList.length}</div>
+            <button style={{marginBottom: 10}} className={`button ${!adminMode && 'button--disabled'}`} disabled={!adminMode} onClick={createRequest}>Создать заявку</button>
+            <table style={{borderCollapse: 'collapse'}}>
+                <thead style={{fontSize: '11px'}}>
                 <tr>
-                    <th>Номер заявки</th>
-                    <th>Дата и время получения заявки от клиента</th>
-                    <th>Название компании клиента</th>
-                    <th>ФИО перевозчика</th>
-                    <th>Контактный телефон перевозчика</th>
-                    <th>Комментарии</th>
-                    <th>Статус заявки</th>
-                    <th>ATI код сети перевозчика</th>
+                    {tableValueMap.map((value) =>
+                        <th>{value}</th>
+                    )}
                 </tr>
                 </thead>
                 <tbody>
                 {
                     requestList.map((request, index) => (
-                        <tr onDoubleClick={() => doubleClickHandler(request.requestNumber)} key={request.requestNumber}>
-                            <td>{request.requestNumber}</td>
-                            <td>{request.dateWithTime}</td>
-                            <td>{request.clientCompanyName}</td>
-                            <td>{request.driverName}</td>
-                            <td>{request.driverPhoneNumber}</td>
-                            <td>{request.comment}</td>
-                            <td>{request.requestStatus}</td>
-                            <td><a href={request.ATIcode}>{request.ATIcode}</a></td>
-                            <button
-                                onClick={() => setWindowState((prev: any) =>
-                                ({...prev, isOpen: true, requestNumber: request.requestNumber, isRequestCreating: false}))}
-                                disabled={!adminMode}
-                            >
-                                Изменить заявку
-                            </button>
-                            <button
-                                onClick={() => setRequestList((prev: any) => prev.filter((a: any) =>
-                                    a.requestNumber !== request.requestNumber
-                                ))}
-                                disabled={!adminMode}
-                            >
-                                Удалить заявку
-                            </button>
+                        <tr style={{border: '1px solid black'}} onDoubleClick={() => doubleClickHandler(request.requestNumber)} key={request.requestNumber}>
+                            {Object.entries(request).map(([key, value]) =>
+                                key !== 'ATIcode'
+                                    ? (<td style={{border: '1px solid black'}}>{value}</td>)
+                                    : (<td style={{border: '1px solid black'}}><a style={{textDecoration: 'none'}} href={value}>{value}</a></td>)
+                            )}
+                            <td className='td_with_buttons'>
+                                <td className='td_with_button'>
+                                    <button
+                                        className={`button button--table ${!adminMode && 'button--disabled'}`}
+                                        onClick={() => setWindowState((prev) =>
+                                        ({...prev, isOpen: true, requestNumber: request.requestNumber, isRequestCreating: false}))}
+                                        disabled={!adminMode}
+                                    >
+                                        Изменить заявку
+                                    </button>
+                                </td>
+                                <td className='td_with_button'>
+                                    <button
+                                        className={`button button--table ${!adminMode && 'button--disabled'}`}
+                                        onClick={() => setRequestList((prev) => prev.filter((a) =>
+                                            a.requestNumber !== request.requestNumber
+                                        ))}
+                                        disabled={!adminMode}
+                                    >
+                                        Удалить заявку
+                                    </button>
+                                </td>
+                            </td>
                         </tr>
                     ))
                 }
                 </tbody>
             </table>
+            <Modal/>
             {windowState.isOpen &&
             <CreateAndEditWindow
-                isOpen={windowState.isOpen}
                 closeWindow={() =>
-                    setWindowState((prev: any) => ({...prev, isOpen: false}))
+                    setWindowState((prev) => ({...prev, isOpen: false}))
                 }
                 currentRequestNumber={windowState.requestNumber}
                 isRequestCreating={windowState.isRequestCreating}

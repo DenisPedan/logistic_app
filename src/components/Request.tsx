@@ -13,14 +13,14 @@ export interface RequestObject {
 }
 
 interface RequestProps {
-    requestData: RequestObject | any,
+    requestData: RequestObject,
 }
 
 const Request: FC<RequestProps> = ({requestData}) => {
     const navigate = useNavigate()
     return (
         <div>
-            <button onClick={() => navigate('/')}>Назад к таблице</button>
+            <button style={{marginBottom: 10}} className='button' onClick={() => navigate('/')}>Назад к таблице</button>
             <div>
                <p>{requestData.requestNumber}</p>
                <p>{requestData.dateWithTime}</p>
@@ -29,7 +29,7 @@ const Request: FC<RequestProps> = ({requestData}) => {
                <p>{requestData.driverPhoneNumber}</p>
                <p>{requestData.comment}</p>
                <p>{requestData.requestStatus}</p>
-               <p>{requestData.ATIcode}</p>
+               <p><a style={{textDecoration: 'none'}} href={requestData.ATIcode}>{requestData.ATIcode}</a></p>
             </div>
         </div>
     );
